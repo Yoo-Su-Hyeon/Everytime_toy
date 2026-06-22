@@ -7,7 +7,6 @@ const searchInput = document.getElementById("searchInput");
 const courseList = document.getElementById("courseList");
 const courseTitle = document.getElementById("courseTitle");
 
-// 처음 메인화면에 보일 내 수강 중인 과목
 const myCourses = [
   { badge: "전필", badgeClass: "blue-light", title: "생명과학의기초", professor: "김태훈" },
   { badge: "전탐", badgeClass: "blue-light", title: "식품과학의기초", professor: "정미숙, 한정우" },
@@ -18,7 +17,6 @@ const myCourses = [
   { badge: "교양", badgeClass: "yellow", title: "현대사회와부족들", professor: "함세정" },
 ];
 
-// 검색할 때 나올 전체 과목 데이터
 const allCourses = [
   { badge: "전탐", badgeClass: "blue-light", title: "심리학개론", professor: "임혜진" },
   { badge: "전공", badgeClass: "blue", title: "성격심리학", professor: "임혜진" },
@@ -47,11 +45,18 @@ function renderCourses(courses) {
       </div>
     `;
 
+    item.addEventListener("click", function () {
+      location.href =
+        "/reviews/write/" +
+        "?title=" + encodeURIComponent(course.title) +
+        "&professor=" + encodeURIComponent(course.professor) +
+        "&color=" + encodeURIComponent(course.badgeClass);
+    });
+
     courseList.appendChild(item);
   });
 }
 
-// 회원가입 완료 모달
 if (params.get("signup") === "success") {
   modal.classList.add("show");
 }
@@ -63,10 +68,8 @@ if (modalCloseBtn) {
   });
 }
 
-// 처음에는 내 수강 중인 과목 보여주기
 renderCourses(myCourses);
 
-// 검색 기능
 searchInput.addEventListener("input", function () {
   const keyword = searchInput.value.trim().toLowerCase();
 

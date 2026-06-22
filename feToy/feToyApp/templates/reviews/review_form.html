@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>강의 후기 등록</title>
+  <link rel="stylesheet" href="{% static 'css/review-form.css' %}">
+</head>
+<body>
+
+<div class="mobile-container review-form-page">
+
+  <header class="review-form-header">
+    <button type="button" class="back-btn" onclick="history.back()">‹</button>
+    <h1>강의 후기 등록</h1>
+  </header>
+
+  <form class="review-form">
+
+    <section class="rating-section">
+      <div class="stars" id="stars">
+        <span data-score="1">★</span>
+        <span data-score="2">★</span>
+        <span data-score="3">★</span>
+        <span data-score="4">★</span>
+        <span data-score="5">★</span>
+      </div>
+      <span class="score-text">
+        <span id="scoreValue">0</span> / 5
+      </span>
+    </section>
+
+    <section class="content-section">
+      <textarea
+        id="reviewContent"
+        maxlength="1000"
+        placeholder="이 강의에 대한 총평을 작성해주세요."
+      ></textarea>
+      <p class="count-text">
+        <span id="contentCount">0</span> / 1,000
+      </p>
+    </section>
+
+    <section class="input-section dropdown-section">
+  <label for="lectureName">강의명</label>
+  <input
+    type="text"
+    id="lectureName"
+    placeholder="입력하기"
+    autocomplete="off"
+  >
+
+  <ul class="dropdown-list" id="lectureDropdown"></ul>
+</section>
+
+<section class="input-section dropdown-section">
+  <label for="semester">수강학기</label>
+  <input
+    type="text"
+    id="semester"
+    placeholder="입력하기"
+    autocomplete="off"
+    readonly
+  >
+
+  <ul class="dropdown-list" id="semesterDropdown"></ul>
+</section>
+
+    <section class="notice-section">
+      <p>▲ 허위, 홍보, 저작권 침해, 명예훼손 내용을 작성할 경우, 서비스 이용이 제한될 수 있습니다.</p>
+      <p>▲ 최근 5년 이내 수강한 과목에 대해서만 강의평을 작성할 수 있습니다.</p>
+    </section>
+
+    <button type="button" class="submit-btn" id="submitBtn" disabled>
+      ✎ 후기 작성
+    </button>
+
+  </form>
+
+</div>
+
+<script src="{% static 'js/review-form.js' %}"></script>
+</body>
+</html>

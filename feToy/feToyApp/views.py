@@ -9,3 +9,6 @@ def main(request):
 
 def login(request):
     return render(request, 'accounts/login.html')
+
+def review_form(request):
+    return render(request, "reviews/review_form.html")
