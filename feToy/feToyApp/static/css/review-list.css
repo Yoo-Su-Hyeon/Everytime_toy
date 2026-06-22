@@ -41,8 +41,8 @@ body {
 }
 
 .back-btn img {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .review-list-header h1 {
@@ -53,9 +53,15 @@ body {
 .review-summary {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  margin-bottom: 14px;
+  align-items: flex-start;
+  padding: 0 20px 14px;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 0;
+}
+
+.summary-left-wrap {
+  display: flex;
+  flex-direction: column;
 }
 
 .summary-left {
@@ -67,6 +73,12 @@ body {
 .summary-left strong {
   font-size: 17px;
   color: #111;
+}
+
+.professor-name {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #8b8b8b;
 }
 
 .summary-stars,
@@ -89,18 +101,82 @@ body {
 .filter-box {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
-.filter-select {
-  height: 28px;
+.custom-select {
+  position: relative;
+}
+
+.select-btn {
+  height: 24px;
+  min-width: 48px;
   border: none;
-  border-radius: 12px;
-  font-size: 11px;
-  color: #777;
-  outline: none;
+  border-radius: 7px;
   background-color: #f4f4f4;
+  color: #777;
+  font-size: 10px;
   padding: 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+#sortFilter .select-btn {
+  min-width: 56px;
+}
+
+.arrow img {
+  width: 10px;
+  height: 10px;
+  display: block;
+}
+
+.select-dropdown {
+  display: none;
+  position: absolute;
+  top: 28px;
+  right: 0;
+  background-color: #ffffff;
+  list-style: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+}
+
+.custom-select.open .select-dropdown {
+  display: block;
+}
+
+.rating-dropdown {
+  width: 78px;
+}
+
+.sort-dropdown {
+  width: 76px;
+}
+
+.select-dropdown li {
+  height: 31px;
+  padding: 9px 9px;
+  font-size: 10px;
+  color: #555;
+  background-color: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.select-dropdown li:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-star {
+  width: 10px;
+  height: 10px;
 }
 
 .review-list {
@@ -165,18 +241,17 @@ body {
   gap: 2px;
 }
 
-.review-meta span:first-child {
+.like-count {
   color: #ff4b3e;
 }
 
-.review-meta span:last-child {
+.comment-count {
   color: #2388ff;
 }
 
 .review-meta img {
   width: 12px;
   height: 12px;
-  display: block;
 }
 
 .review-content {
@@ -184,6 +259,27 @@ body {
   font-size: 11px;
   line-height: 1.45;
   color: #222;
+}
+
+.empty-state {
+  height: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #777;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.empty-icon {
+  width: 78px;
+  height: 78px;
 }
 
 .write-btn {
@@ -215,20 +311,82 @@ body {
 
 .write-btn.blue {
   background-color: #85b8cf;
-  color: #ffffff;
+  color: #005b8a;
 }
 
 .write-btn.orange {
   background-color: #f4ad73;
-  color: #ffffff;
+  color: #8a4b16;
 }
 
 .write-btn.yellow {
   background-color: #f6cf70;
-  color: #ffffff;
+  color: #8a5a00;
 }
 
 .write-btn.pink {
   background-color: #ffa283;
+  color: #8a3c24;
+}
+
+.delete-modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-modal.show {
+  display: flex;
+}
+
+.delete-modal-content {
+  width: 270px;
+  min-height: 92px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.25);
+  padding: 22px 18px 18px;
+  text-align: center;
+}
+
+.delete-modal-content p {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.delete-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+.delete-btn-row button,
+.ok-btn {
+  width: 100px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #777;
+}
+
+.confirm-delete-btn {
+  background-color: #ff4b3e;
   color: #ffffff;
+}
+
+.ok-btn {
+  display: none;
+  margin: 0 auto;
+  background-color: #f1f1f1;
+  color: #777;
 }
