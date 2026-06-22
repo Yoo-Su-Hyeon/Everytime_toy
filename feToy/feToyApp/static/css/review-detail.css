@@ -1,0 +1,365 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #8f8f8f;
+  font-family: Arial, sans-serif;
+}
+
+.mobile-container {
+  width: 360px;
+  height: 720px;
+  margin: 40px auto;
+  background-color: #f8f9fa;
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+}
+
+.back-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.back-btn img {
+  width: 26px;
+  height: 26px;
+}
+
+.detail-header h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.review-box {
+  padding: 8px 24px 16px;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.stars img {
+  width: 29px;
+  height: 29px;
+}
+
+.score {
+  font-size: 18px;
+  font-weight: 700;
+  color: #777;
+}
+
+.review-info {
+  margin-bottom: 42px;
+}
+
+.review-info p {
+  margin: 4px 0;
+  font-size: 11px;
+  color: #8a8a8a;
+}
+
+.review-content {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #333;
+  word-break: keep-all;
+}
+
+.action-bar {
+  height: 35px;
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #fafafa;
+}
+
+.action-bar button {
+  border: none;
+  background: none;
+  color: #777;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.action-bar button.active {
+  color: #ff4b3e;
+}
+
+.action-bar img {
+  width: 12px;
+  height: 12px;
+}
+
+.comment-list {
+  height: 285px;
+  overflow-y: auto;
+  padding-bottom: 10px;
+}
+
+.comment-list::-webkit-scrollbar {
+  display: none;
+}
+
+.comment-item {
+  padding: 14px 24px 12px;
+  border-bottom: none;
+}
+
+
+
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-top strong {
+  font-size: 12px;
+  color: #111;
+}
+
+.comment-icons {
+  display: flex;
+  gap: 6px;
+}
+
+/* 일반 댓글 아이콘은 박스 없이 */
+.comment-icons button {
+  width: auto;
+  height: auto;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  color: #999;
+  cursor: pointer;
+}
+
+.comment-icons button.active {
+  color: #ff4b3e;
+}
+
+.comment-item p {
+  margin: 8px 0 5px;
+  font-size: 12px;
+  color: #222;
+}
+
+.comment-item span {
+  font-size: 10px;
+  color: #999;
+}
+
+/* 대댓글만 박스 */
+.reply {
+  display: flex;
+  gap: 8px;
+  padding: 8px 24px 10px 42px;
+  border-bottom: none;
+}
+
+.reply-mark {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #999;
+}
+
+.reply-body {
+  flex: 1;
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+  background-color: #fafafa;
+  padding: 10px 12px 8px;
+}
+
+/* 대댓글 안의 아이콘도 작게만 보이게 */
+.reply .comment-icons button {
+  border: none;
+  background: none;
+  color: #999;
+  font-size: 13px;
+}
+
+.reply .comment-icons button.active {
+  color: #ff4b3e;
+}
+
+.reply em {
+  color: #ef5555;
+  font-style: normal;
+}
+
+.reply-form {
+  display: none;
+  margin-top: 10px;
+  height: 34px;
+  background-color: #eeeeee;
+  border-radius: 5px;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.reply-form.show {
+  display: flex;
+}
+
+.reply-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 11px;
+}
+
+.reply-form button {
+  border: none;
+  background: none;
+  font-size: 16px;
+  color: #999;
+  cursor: pointer;
+}
+
+.comment-form {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  height: 38px;
+  background-color: #eeeeee;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.comment-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 11px;
+  color: #333;
+}
+
+.comment-form input::placeholder {
+  color: #9a9a9a;
+}
+
+.comment-form button {
+  border: none;
+  background: none;
+  color: #999;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.delete-modal {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(248, 249, 250, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.delete-modal.show {
+  display: flex;
+}
+
+.delete-modal-content {
+  width: 280px;
+  min-height: 110px;
+  background-color: #fff;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  padding: 28px 24px 18px;
+  text-align: center;
+}
+
+.delete-modal-content p {
+  margin: 0 0 22px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+}
+
+.delete-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.cancel-btn,
+.confirm-delete-btn,
+.ok-btn {
+  width: 98px;
+  height: 30px;
+  border: none;
+  border-radius: 7px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.cancel-btn,
+.ok-btn {
+  background-color: #f1f1f1;
+  color: #777;
+}
+
+.confirm-delete-btn {
+  background-color: #ff5148;
+  color: #fff;
+}
+
+.ok-btn {
+  display: none;
+  margin: 0 auto;
+}
+
+#editReviewBtn,
+#deleteReviewBtn,
+#commentMoveBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#editReviewBtn img,
+#deleteReviewBtn img,
+#commentMoveBtn img {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+}
