@@ -23,5 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.signup, name="signup"),
     path('', include('feToyApp.urls')),
+    path('accounts/', include('accounts.urls')), 
+    path('reviews/', include('reviews.urls')),
+    path('subjects/', include('subjects.urls')),
 ]
 

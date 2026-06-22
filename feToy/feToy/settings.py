@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "feToyApp",
+    'accounts',
+    'reviews',
+    'subjects',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -116,3 +120,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# 회원 정보는 users 앱의 User 모델에 저장함
+AUTH_USER_MODEL = 'users.User'
