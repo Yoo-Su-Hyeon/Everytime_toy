@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>메인화면</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+
+<div class="mobile-container main-page">
+
+  <header class="main-header">
+    <div>
+      <h1>수강 후기</h1>
+      <p>덕성여대</p>
+    </div>
+    <button class="logout-btn">Logout</button>
+  </header>
+
+  <section class="search-box">
+    <input type="text" placeholder="과목명 또는 교수명 검색">
+    <span class="search-icon">⌕</span>
+  </section>
+
+  <section class="course-section">
+    <h2>수강 중인 과목</h2>
+
+    <div class="course-list">
+      <div class="course-item">
+        <span class="badge blue-light">전필</span>
+        <div>
+          <strong>생명과학의기초</strong>
+          <p>김태훈</p>
+        </div>
+      </div>
+
+      <div class="course-item">
+        <span class="badge blue-light">전탐</span>
+        <div>
+          <strong>식품과학의기초</strong>
+          <p>정미숙, 한정우</p>
+        </div>
+      </div>
+
+      <div class="course-item">
+        <span class="badge blue">전공</span>
+        <div>
+          <strong>최신일반화학</strong>
+          <p>박현</p>
+        </div>
+      </div>
+
+      <div class="course-item">
+        <span class="badge orange">필교</span>
+        <div>
+          <strong>덕성인의기초</strong>
+          <p>이용민</p>
+        </div>
+      </div>
+
+      <div class="course-item">
+        <span class="badge orange">필교</span>
+        <div>
+          <strong>이해와소통세미나</strong>
+          <p>최인선</p>
+        </div>
+      </div>
+
+      <div class="course-item">
+        <span class="badge orange">필교</span>
+        <div>
+          <strong>컴퓨팅사고</strong>
+          <p>박주연</p>
+        </div>
+      </div>
+
+      <div class="course-item">
+        <span class="badge yellow">교양</span>
+        <div>
+          <strong>현대사회와부족들</strong>
+          <p>함세정</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal" id="signupModal">
+    <div class="modal-content">
+      <p>회원가입이 완료되었습니다.</p>
+      <button id="modalCloseBtn">확인</button>
+    </div>
+  </div>
+
+<div class="modal" id="signupModal">
+  <div class="modal-content">
+    <p>회원가입이 완료되었습니다.</p>
+    <button type="button" id="modalCloseBtn">확인</button>
+  </div>
+</div>
+
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
