@@ -1,7 +1,9 @@
 const reviewParams = new URLSearchParams(window.location.search);
-const selectedTitle = reviewParams.get("title");
-const selectedProfessor = reviewParams.get("professor");
+
+let selectedTitle = reviewParams.get("title");
+let selectedProfessor = reviewParams.get("professor");
 let selectedColor = reviewParams.get("color");
+const editId = reviewParams.get("editId");
 
 const stars = document.querySelectorAll("#stars span");
 const scoreValue = document.getElementById("scoreValue");
@@ -17,13 +19,13 @@ const semesterDropdown = document.getElementById("semesterDropdown");
 let selectedScore = 0;
 
 const lectures = [
-  { text: "생명과학의기초 / 김태훈 / 화D목C / 차205", color: "blue-light" },
-  { text: "식품과학의기초 / 정미숙, 한정우 / 월C수D / 차203", color: "blue-light" },
-  { text: "최신일반화학 / 박현 / 월A수B / 차201", color: "blue" },
-  { text: "덕성인의기초 / 이용민 / 금A / 차101", color: "orange" },
-  { text: "이해와소통세미나 / 최인선 / 월A수B / 차205", color: "orange" },
-  { text: "컴퓨팅사고 / 박주연 / 화B목B / 차202", color: "orange" },
-  { text: "현대사회와부족들 / 함세정 / 수A목A / 차204", color: "yellow" },
+  { text: "생명과학의기초 / 김태훈 / 화D목C / 차205", title: "생명과학의기초", professor: "김태훈", color: "blue-light" },
+  { text: "식품과학의기초 / 정미숙, 한정우 / 월C수D / 차203", title: "식품과학의기초", professor: "정미숙, 한정우", color: "blue-light" },
+  { text: "최신일반화학 / 박현 / 월A수B / 차201", title: "최신일반화학", professor: "박현", color: "blue" },
+  { text: "덕성인의기초 / 이용민 / 금A / 차101", title: "덕성인의기초", professor: "이용민", color: "orange" },
+  { text: "이해와소통세미나 / 최인선 / 월A수B / 차205", title: "이해와소통세미나", professor: "최인선", color: "orange" },
+  { text: "컴퓨팅사고 / 박주연 / 화B목B / 차202", title: "컴퓨팅사고", professor: "박주연", color: "orange" },
+  { text: "현대사회와부족들 / 함세정 / 수A목A / 차204", title: "현대사회와부족들", professor: "함세정", color: "yellow" },
 ];
 
 const semesters = [
@@ -31,44 +33,56 @@ const semesters = [
   "25년 겨울학기",
   "25년 2학기",
   "25년 여름학기",
-  "25년 1학기"
+  "25년 1학기",
 ];
 
-if (selectedTitle && selectedProfessor) {
-  const matchedLecture = lectures.find((lecture) =>
-    lecture.text.includes(selectedTitle) &&
-    lecture.text.includes(selectedProfessor)
-  );
+function getCurrentLecture() {
+  const matched = lectures.find((lecture) => lectureName.value.includes(lecture.title));
 
-  if (matchedLecture) {
-    lectureName.value = matchedLecture.text;
-    selectedColor = matchedLecture.color;
-  } else {
-    lectureName.value = `${selectedTitle} / ${selectedProfessor}`;
-  }
+  if (matched) return matched;
+
+  return {
+    title: selectedTitle || "생명과학의기초",
+    professor: selectedProfessor || "김태훈",
+    color: selectedColor || "blue-light",
+    text: lectureName.value,
+  };
+}
+
+function getStorageKey(title, professor) {
+  return `reviews_${title}_${professor}`;
+}
+
+function getSavedReviews(title, professor) {
+  const saved = localStorage.getItem(getStorageKey(title, professor));
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveReviews(title, professor, reviews) {
+  localStorage.setItem(getStorageKey(title, professor), JSON.stringify(reviews));
+}
+
+function setStars(score) {
+  selectedScore = Number(score);
+  scoreValue.textContent = selectedScore;
+
+  stars.forEach((star) => {
+    star.classList.toggle("active", Number(star.dataset.score) <= selectedScore);
+  });
 }
 
 function applyButtonColor() {
   submitBtn.classList.remove("blue-light", "blue", "orange", "yellow", "pink");
+
+  const currentLecture = getCurrentLecture();
+  selectedColor = currentLecture.color;
 
   if (selectedColor) {
     submitBtn.classList.add(selectedColor);
   }
 }
 
-function updateSelectedColorByLecture() {
-  const matchedLecture = lectures.find((lecture) =>
-    lectureName.value.includes(lecture.text.split(" / ")[0])
-  );
-
-  if (matchedLecture) {
-    selectedColor = matchedLecture.color;
-  }
-}
-
 function checkForm() {
-  updateSelectedColorByLecture();
-
   const hasScore = selectedScore > 0;
   const hasContent = reviewContent.value.trim().length > 0;
   const hasLecture = lectureName.value.trim().length > 0;
@@ -87,9 +101,7 @@ function checkForm() {
 function showLectureDropdown(keyword) {
   lectureDropdown.innerHTML = "";
 
-  const filteredLectures = lectures.filter((lecture) =>
-    lecture.text.includes(keyword)
-  );
+  const filteredLectures = lectures.filter((lecture) => lecture.text.includes(keyword));
 
   filteredLectures.forEach((lecture) => {
     const li = document.createElement("li");
@@ -97,7 +109,10 @@ function showLectureDropdown(keyword) {
 
     li.addEventListener("click", () => {
       lectureName.value = lecture.text;
+      selectedTitle = lecture.title;
+      selectedProfessor = lecture.professor;
       selectedColor = lecture.color;
+
       lectureDropdown.classList.remove("show");
       checkForm();
     });
@@ -127,15 +142,36 @@ function showSemesterDropdown() {
   semesterDropdown.classList.add("show");
 }
 
+function loadInitialData() {
+  const matchedLecture = lectures.find((lecture) => {
+    return lecture.title === selectedTitle && lecture.professor === selectedProfessor;
+  });
+
+  if (matchedLecture) {
+    lectureName.value = matchedLecture.text;
+    selectedColor = matchedLecture.color;
+  }
+
+  if (editId) {
+    const currentLecture = getCurrentLecture();
+    const savedReviews = getSavedReviews(currentLecture.title, currentLecture.professor);
+    const targetReview = savedReviews.find((review) => review.id === editId);
+
+    if (targetReview) {
+      reviewContent.value = targetReview.content;
+      contentCount.textContent = targetReview.content.length;
+      semester.value = targetReview.semester.replace(" 수강자", "");
+      setStars(targetReview.rating);
+      submitBtn.innerHTML = "✎ 후기 수정";
+    }
+  }
+
+  checkForm();
+}
+
 stars.forEach((star) => {
   star.addEventListener("click", () => {
-    selectedScore = Number(star.dataset.score);
-    scoreValue.textContent = selectedScore;
-
-    stars.forEach((item) => {
-      item.classList.toggle("active", Number(item.dataset.score) <= selectedScore);
-    });
-
+    setStars(star.dataset.score);
     checkForm();
   });
 });
@@ -179,7 +215,42 @@ document.addEventListener("click", (event) => {
 });
 
 submitBtn.addEventListener("click", () => {
-  alert("후기 작성이 완료되었습니다.");
+  const currentLecture = getCurrentLecture();
+
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hour = String(now.getHours()).padStart(2, "0");
+  const minute = String(now.getMinutes()).padStart(2, "0");
+
+  const savedReviews = getSavedReviews(currentLecture.title, currentLecture.professor);
+
+  const newReview = {
+    id: editId || `my-${Date.now()}`,
+    date: `${month}/${day} ${hour}:${minute}`,
+    semester: `${semester.value.trim()} 수강자`,
+    rating: selectedScore,
+    like: 0,
+    comment: 0,
+    content: reviewContent.value.trim(),
+    mine: true,
+  };
+
+  if (editId) {
+    const updatedReviews = savedReviews.map((review) =>
+      review.id === editId ? newReview : review
+    );
+
+    saveReviews(currentLecture.title, currentLecture.professor, updatedReviews);
+  } else {
+    saveReviews(currentLecture.title, currentLecture.professor, [newReview, ...savedReviews]);
+  }
+
+  location.href =
+    "/reviews/list/" +
+    "?title=" + encodeURIComponent(currentLecture.title) +
+    "&professor=" + encodeURIComponent(currentLecture.professor) +
+    "&color=" + encodeURIComponent(currentLecture.color);
 });
 
-checkForm();
+loadInitialData();
