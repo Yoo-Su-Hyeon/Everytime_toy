@@ -1,20 +1,28 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# Create your views here.
+
 def signup(request):
-    return render(request, 'accounts/signup.html')
+    if request.method == "POST":
+        return redirect("main")
 
-def main(request):
-    return render(request, 'main.html')
+    return render(request, "accounts/signup.html")
+
 
 def login(request):
-    return render(request, 'accounts/login.html')
+    return render(request, "accounts/login.html")
+
+
+def main(request):
+    return render(request, "main.html")
+
 
 def review_form(request):
     return render(request, "reviews/review_form.html")
 
+
 def review_list(request):
     return render(request, "reviews/review_list.html")
+
 
 def review_detail(request):
     return render(request, "reviews/review_detail.html")

@@ -202,3 +202,12 @@ body {
 .course-list {
   padding-bottom: 30px;
 }
+
+.logout-btn {
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: #222;
+  text-decoration: none;
+  cursor: pointer;
+}
