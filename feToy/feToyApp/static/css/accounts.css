@@ -102,3 +102,23 @@ body {
 .signup-btn:hover {
   background-color: #6aa9c4;
 }
+
+.input-error {
+  border: 1px solid #ff5a5a !important;
+}
+
+.wrapper-error {
+  border: 1px solid #ff5a5a !important;
+}
+
+.error-text {
+  display: none;
+  color: #ff5a5a;
+  font-size: 10px;
+  margin-top: 6px;
+  line-height: 1.2;
+}
+
+.error-text.show {
+  display: block;
+}

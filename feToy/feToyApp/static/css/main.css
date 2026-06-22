@@ -189,3 +189,16 @@ body {
 
   cursor: pointer;
 }
+
+.badge.pink {
+  background-color: #ffa283;
+  color: #ffffff;
+}
+
+.mobile-container {
+  overflow-y: auto;
+}
+
+.course-list {
+  padding-bottom: 30px;
+}
