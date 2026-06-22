@@ -1,0 +1,175 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #8f8f8f;
+  font-family: Arial, sans-serif;
+}
+
+.mobile-container {
+  width: 330px;
+  height: 720px;
+  background-color: #f8f9fa;
+  margin: 40px auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-page {
+  padding: 28px 22px;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.main-header h1 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 5px;
+}
+
+.main-header p {
+  font-size: 10px;
+  color: #777;
+}
+
+.logout-btn {
+  border: none;
+  background: none;
+  font-size: 11px;
+  color: #555;
+  cursor: pointer;
+}
+
+.search-box {
+  width: 100%;
+  height: 36px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  margin-bottom: 38px;
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 11px;
+  color: #333;
+}
+
+.search-box input::placeholder {
+  color: #999;
+}
+
+.search-icon {
+  font-size: 17px;
+  color: #777;
+}
+
+.course-section h2 {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #111;
+}
+
+.course-list {
+  border-top: 1px solid #eee;
+}
+
+.course-item {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.blue-light {
+  background-color: #c5e8f5;
+}
+
+.blue {
+  background-color: #7db2c9;
+}
+
+.orange {
+  background-color: #f2ad70;
+}
+
+.yellow {
+  background-color: #f3cf75;
+}
+
+.course-item strong {
+  display: block;
+  font-size: 11px;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.course-item p {
+  font-size: 10px;
+  color: #777;
+}
+
+/* 회원가입 완료 팝업 */
+.modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.12);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  width: 220px;
+  background-color: #fff;
+  text-align: center;
+  padding: 28px 20px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.modal-content p {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 22px;
+  color: #111;
+}
+
+.modal-content button {
+  border: none;
+  background: none;
+  font-size: 11px;
+  color: #333;
+  cursor: pointer;
+}
