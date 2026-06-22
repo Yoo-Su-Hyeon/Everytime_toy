@@ -182,3 +182,11 @@ searchInput.addEventListener("input", function () {
 
   renderCourses(filteredCourses);
 });
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", function () {
+    location.href = "/login/";
+  });
+}

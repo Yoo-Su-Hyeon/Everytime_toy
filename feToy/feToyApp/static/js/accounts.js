@@ -1,45 +1,62 @@
 document.addEventListener("DOMContentLoaded", function () {
-const passwordInput = document.getElementById("password");
-const togglePassword = document.getElementById("togglePassword");
-const signupForm = document.getElementById("signupForm");
+  const studentIdInput = document.getElementById("studentId");
+  const passwordInput = document.getElementById("password");
+  const togglePassword = document.getElementById("togglePassword");
+  const signupBtn = document.getElementById("signupBtn");
+  const studentIdError = document.getElementById("studentIdError");
+  const passwordError = document.getElementById("passwordError");
 
-const studentId = document.getElementById("studentId");
-const passwordWrapper = document.querySelector(".password-wrapper");
+  studentIdError.style.display = "none";
+  passwordError.style.display = "none";
 
-const studentIdError = document.getElementById("studentIdError");
-const passwordError = document.getElementById("passwordError");
+  togglePassword.addEventListener("click", function () {
+    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+  });
 
-togglePassword.addEventListener("click", function () {
-passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+  signupBtn.addEventListener("click", function () {
+    const studentId = studentIdInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    let isValid = true;
+
+    if (!/^\d{8}$/.test(studentId)) {
+      studentIdError.style.display = "block";
+      isValid = false;
+    } else {
+      studentIdError.style.display = "none";
+    }
+
+    if (!/^(?=.*[a-z])(?=.*\d)[a-z\d]{8,10}$/.test(password)) {
+      passwordError.style.display = "block";
+      isValid = false;
+    } else {
+      passwordError.style.display = "none";
+    }
+
+    if (!isValid) {
+      return;
+    }
+
+    alert("회원가입이 완료되었습니다.");
+    window.location.href = "/main/";
+  });
 });
 
-signupForm.addEventListener("submit", function (event) {
-event.preventDefault();
+const loginBtn = document.getElementById("loginBtn");
+const loginPasswordInput = document.getElementById("loginPassword");
+const toggleLoginPassword = document.getElementById("toggleLoginPassword");
 
-```
-let isValid = true;
-
-studentId.classList.remove("input-error");
-passwordWrapper.classList.remove("wrapper-error");
-studentIdError.classList.remove("show");
-passwordError.classList.remove("show");
-
-if (!/^\d{8}$/.test(studentId.value.trim())) {
-  studentId.classList.add("input-error");
-  studentIdError.classList.add("show");
-  isValid = false;
+if (toggleLoginPassword && loginPasswordInput) {
+  toggleLoginPassword.addEventListener("click", function () {
+    loginPasswordInput.type =
+      loginPasswordInput.type === "password" ? "text" : "password";
+  });
 }
 
-if (!/^[a-z0-9]{8,10}$/.test(passwordInput.value.trim())) {
-  passwordWrapper.classList.add("wrapper-error");
-  passwordError.classList.add("show");
-  isValid = false;
+if (loginBtn) {
+  loginBtn.addEventListener("click", function () {
+    alert("로그인되었습니다.");
+    window.location.href = "/main/";
+  });
 }
 
-if (isValid) {
-  window.location.href = "/main/?signup=success";
-}
-```
-
-});
-});
