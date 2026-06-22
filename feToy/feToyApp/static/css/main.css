@@ -211,3 +211,59 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
+/* 모달의 기준이 메인 화면이 되도록 설정 */
+.mobile-container {
+  position: relative;
+}
+
+/* 모달 전체 영역 */
+.modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 모달 표시 */
+.modal.show {
+  display: flex;
+}
+
+/* 흰색 팝업창 */
+.modal-content {
+  width: 286px;
+  min-height: 104px;
+  padding: 21px 20px 18px;
+  background-color: #ffffff;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+  text-align: center;
+  transform: translateY(15px);
+}
+
+/* 완료 문구 */
+.modal-content p {
+  margin: 0 0 18px;
+  color: #111111;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* 확인 버튼 */
+.modal-content button {
+  width: 90px;
+  height: 30px;
+  border: none;
+  border-radius: 7px;
+  background-color: #f3f3f3;
+  color: #333333;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #e8e8e8;
+}

@@ -137,9 +137,12 @@ function renderCourses(courses) {
     item.addEventListener("click", function () {
       location.href =
         "/reviews/list/" +
-        "?title=" + encodeURIComponent(course.title) +
-        "&professor=" + encodeURIComponent(course.professor) +
-        "&color=" + encodeURIComponent(course.badgeClass);
+        "?title=" +
+        encodeURIComponent(course.title) +
+        "&professor=" +
+        encodeURIComponent(course.professor) +
+        "&color=" +
+        encodeURIComponent(course.badgeClass);
     });
 
     courseList.appendChild(item);
@@ -188,5 +191,26 @@ const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", function () {
     location.href = "/login/";
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    const signupModal = document.getElementById("signupModal");
+    const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+    const signupComplete = sessionStorage.getItem("signupComplete");
+
+    // 회원가입을 마치고 메인 페이지로 온 경우에만 모달 표시
+    if (signupComplete === "true" && signupModal) {
+      signupModal.classList.add("show");
+
+      // 새로고침할 때 다시 뜨지 않도록 삭제
+      sessionStorage.removeItem("signupComplete");
+    }
+
+    // 확인 버튼을 누르면 모달 닫기
+    if (modalCloseBtn && signupModal) {
+      modalCloseBtn.addEventListener("click", function () {
+        signupModal.classList.remove("show");
+      });
+    }
   });
 }

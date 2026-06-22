@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
   passwordError.style.display = "none";
 
   togglePassword.addEventListener("click", function () {
-    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type =
+      passwordInput.type === "password" ? "text" : "password";
   });
 
   signupBtn.addEventListener("click", function () {
@@ -20,16 +21,20 @@ document.addEventListener("DOMContentLoaded", function () {
     let isValid = true;
 
     if (!/^\d{8}$/.test(studentId)) {
+      studentIdInput.classList.add("input-error");
       studentIdError.style.display = "block";
       isValid = false;
     } else {
+      studentIdInput.classList.remove("input-error");
       studentIdError.style.display = "none";
     }
 
     if (!/^(?=.*[a-z])(?=.*\d)[a-z\d]{8,10}$/.test(password)) {
+      passwordInput.classList.add("input-error");
       passwordError.style.display = "block";
       isValid = false;
     } else {
+      passwordInput.classList.remove("input-error");
       passwordError.style.display = "none";
     }
 
@@ -37,8 +42,24 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    alert("회원가입이 완료되었습니다.");
-    window.location.href = "/main/";
+    window.location.href = "/main/?signup=success";
+  });
+  studentIdInput.addEventListener("input", function () {
+    studentIdInput.classList.remove("input-error");
+    studentIdError.style.display = "none";
+  });
+
+  passwordInput.addEventListener("input", function () {
+    passwordInput.classList.remove("input-error");
+    passwordError.style.display = "none";
+  });
+  [studentIdInput, passwordInput].forEach(function (input) {
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        signupBtn.click();
+      }
+    });
   });
 });
 
@@ -59,4 +80,3 @@ if (loginBtn) {
     window.location.href = "/main/";
   });
 }
-
