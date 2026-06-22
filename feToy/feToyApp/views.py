@@ -12,3 +12,6 @@ def login(request):
 
 def review_form(request):
     return render(request, "reviews/review_form.html")
+
+def review_list(request):
+    return render(request, "reviews/review_list.html")

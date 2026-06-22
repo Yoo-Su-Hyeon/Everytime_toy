@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>과목별 수강 후기</title>
+  <link rel="stylesheet" href="{% static 'css/review-list.css' %}">
+</head>
+<body>
+
+<div class="mobile-container review-list-page">
+
+  <div id="iconPaths"
+    data-back="{% static 'images/뒤로가기.svg' %}"
+    data-like="{% static 'images/좋아요(과목별 수강 후기).svg' %}"
+    data-comment="{% static 'images/댓글(과목별 수강 후기).svg' %}"
+    data-write="{% static 'images/글쓰기 버튼.svg' %}"
+    data-star-active="{% static 'images/활성화 별(과목별 수강 후기-평균 별점).svg' %}"
+    data-star-inactive="{% static 'images/비활성화 별(과목별 수강 후기-평균 별점).svg' %}">
+  </div>
+
+  <header class="review-list-header">
+    <button type="button" class="back-btn" onclick="history.back()">
+      <img src="{% static 'images/뒤로가기.svg' %}" alt="뒤로가기">
+    </button>
+    <h1 id="pageTitle">과목별 수강 후기</h1>
+  </header>
+
+  <section class="review-summary">
+    <div class="summary-left">
+      <strong>4.00</strong>
+      <div class="summary-stars" id="summaryStars"></div>
+    </div>
+
+    <div class="filter-box">
+      <select class="filter-select">
+        <option>전체</option>
+        <option>내 후기</option>
+      </select>
+
+      <select class="filter-select">
+        <option>최신순</option>
+        <option>별점순</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="review-list" id="reviewList"></section>
+
+  <button type="button" class="write-btn" id="writeBtn">
+    <img src="{% static 'images/글쓰기 버튼.svg' %}" alt="">
+    <span>후기 작성</span>
+  </button>
+
+</div>
+
+<script src="{% static 'js/review-list.js' %}"></script>
+</body>
+</html>
