@@ -1,0 +1,118 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>강의 후기 상세보기</title>
+  <link rel="stylesheet" href="{% static 'css/review-detail.css' %}">
+</head>
+<body>
+
+<div class="mobile-container review-detail-page">
+
+  <div id="iconPaths"
+    data-like="{% static 'images/좋아요(강의 후기 상세).svg' %}"
+    data-like-active="{% static 'images/좋아요(과목별 수강 후기).svg' %}"
+    data-comment="{% static 'images/댓글(강의 후기 상세).svg' %}"
+    data-star-active="{% static 'images/활성화 별(과목별 수강 후기-개인별점).svg' %}"
+    data-star-inactive="{% static 'images/비활성화 별(과목별 수강 후기-개인 별점).svg' %}">
+  </div>
+
+  <header class="detail-header">
+    <button type="button" class="back-btn" onclick="history.back()">
+      <img src="{% static 'images/뒤로가기.svg' %}" alt="뒤로가기">
+    </button>
+    <h1 id="detailTitle">생명과학의기초 수강 후기</h1>
+  </header>
+
+  <section class="review-box">
+
+    <div class="rating-row">
+      <div class="stars" id="detailStars"></div>
+      <span class="score" id="detailScore">4 / 5</span>
+    </div>
+
+    <div class="review-info">
+      <p id="detailProfessor">교수명: 김태훈</p>
+      <p id="detailSemester">26년 1학기 수강자</p>
+      <p id="detailDate">06/10 11:50</p>
+    </div>
+
+    <p class="review-content" id="detailContent"></p>
+
+  </section>
+
+  <section class="action-bar">
+    <button type="button">
+      <img id="likeIcon" src="" alt="">
+      <span id="likeCount">추천 1</span>
+    </button>
+
+    <button type="button">
+      <img id="commentIcon" src="" alt="">
+      <span id="commentCount">댓글 2</span>
+    </button>
+
+    <button type="button"><img src="{% static 'images/신고(강의 후기 상세).svg' %}" alt="뒤로가기">신고</button>
+  </section>
+
+<div class="delete-modal" id="deleteModal">
+  <div class="delete-modal-content">
+    <p id="deleteModalText">수강 후기를 정말 삭제하시겠습니까?</p>
+
+    <div class="delete-btn-row" id="deleteBtnRow">
+      <button type="button" class="cancel-btn" id="cancelDeleteBtn">취소</button>
+      <button type="button" class="confirm-delete-btn" id="confirmDeleteBtn">삭제</button>
+    </div>
+
+    <button type="button" class="ok-btn" id="deleteOkBtn">확인</button>
+  </div>
+</div>
+
+
+
+  <section class="comment-list" id="commentList">
+
+    <article class="comment-item">
+      <div class="comment-top">
+        <strong>익명1</strong>
+        <div class="comment-icons">
+          <button type="button"><img src="{% static 'images/좋아요(댓글,대댓글).svg' %}" alt="좋아요"></button>
+          <button type="button"><img src="{% static 'images/대댓글 작성 버튼.svg' %}" alt="댓글"></button>
+        </div>
+      </div>
+
+      <p>무조건 별 붙여주시나요?</p>
+      <span>06.01</span>
+    </article>
+
+    <article class="comment-item reply">
+      <span class="reply-mark"><img src="{% static 'images/대댓글 화살표.svg' %}" alt="댓글"></span>
+
+      <div class="reply-body">
+        <div class="comment-top">
+          <strong>작성자</strong>
+          <div class="comment-icons">
+            <button type="button"><img src="{% static 'images/좋아요(댓글,대댓글).svg' %}" alt="좋아요"></button>
+            <button type="button"><img src="{% static 'images/대댓글 작성 버튼.svg' %}" alt="댓글"></button>
+          </div>
+        </div>
+
+        <p>넵</p>
+        <span>06.01 <em><img src="{% static 'images/좋아요(대댓글).svg' %}" alt="좋아요">1</em></span>
+      </div>
+    </article>
+
+  </section>
+
+  <form class="comment-form" id="commentForm">
+    <input type="text" id="commentInput" placeholder="댓글을 입력하세요.">
+    <button type="submit">▷</button>
+  </form>
+
+</div>
+
+<script src="{% static 'js/review-detail.js' %}"></script>
+</body>
+</html>

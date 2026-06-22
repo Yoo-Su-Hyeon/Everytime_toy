@@ -15,3 +15,6 @@ def review_form(request):
 
 def review_list(request):
     return render(request, "reviews/review_list.html")
+
+def review_detail(request):
+    return render(request, "reviews/review_detail.html")

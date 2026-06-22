@@ -85,7 +85,7 @@ const defaultReviews = [
     semester: "25년 2학기 수강자",
     rating: 2,
     like: 3,
-    comment: 3,
+    comment: 0,
     content: "설명이 이해가 잘 안됨",
     mine: true,
   },
@@ -180,6 +180,33 @@ function renderEmptyState() {
   `;
 }
 
+function goToDetail(review) {
+  location.href =
+    "/reviews/detail/" +
+    "?title=" +
+    encodeURIComponent(selectedTitle) +
+    "&professor=" +
+    encodeURIComponent(selectedProfessor) +
+    "&color=" +
+    encodeURIComponent(selectedColor) +
+    "&id=" +
+    encodeURIComponent(review.id) +
+    "&date=" +
+    encodeURIComponent(review.date) +
+    "&semester=" +
+    encodeURIComponent(review.semester) +
+    "&rating=" +
+    encodeURIComponent(review.rating) +
+    "&like=" +
+    encodeURIComponent(review.like) +
+    "&comment=" +
+    encodeURIComponent(review.comment) +
+    "&mine=" +
+    encodeURIComponent(review.mine) +
+    "&content=" +
+    encodeURIComponent(review.content);
+}
+
 function renderReviews() {
   reviewList.innerHTML = "";
 
@@ -246,11 +273,17 @@ function renderReviews() {
       <p class="review-content">${review.content}</p>
     `;
 
+    item.addEventListener("click", () => {
+      goToDetail(review);
+    });
+
     reviewList.appendChild(item);
   });
 
   document.querySelectorAll(".edit-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+
       const id = btn.dataset.id;
 
       location.href =
@@ -267,7 +300,9 @@ function renderReviews() {
   });
 
   document.querySelectorAll(".delete-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+
       deleteTargetId = btn.dataset.id;
       openDeleteConfirmModal();
     });
@@ -366,6 +401,7 @@ confirmDeleteBtn.addEventListener("click", () => {
     const savedReviews = getSavedReviews().filter(
       (review) => review.id !== deleteTargetId
     );
+
     saveReviews(savedReviews);
   } else {
     const deletedIds = getDeletedDefaultIds();
