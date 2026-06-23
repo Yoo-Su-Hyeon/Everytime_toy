@@ -1,11 +1,7 @@
-const params = new URLSearchParams(window.location.search);
-
-const modal = document.getElementById("signupModal");
-const modalCloseBtn = document.getElementById("modalCloseBtn");
-
 const searchInput = document.getElementById("searchInput");
 const courseList = document.getElementById("courseList");
 const courseTitle = document.getElementById("courseTitle");
+const logoutBtn = document.getElementById("logoutBtn");
 
 // 메인화면에 처음 보일 내 수강 중인 과목
 const myCourses = [
@@ -31,7 +27,7 @@ const myCourses = [
     badge: "필교",
     badgeClass: "orange",
     title: "덕성인의기초",
-    professor: "이용민",
+    professor: "이용敏",
   },
   {
     badge: "필교",
@@ -73,12 +69,7 @@ const allCourses = [
     title: "사회심리학",
     professor: "조희정",
   },
-  {
-    badge: "전공",
-    badgeClass: "blue",
-    title: "사회심리학",
-    professor: "미정",
-  },
+  { badge: "전공", badgeClass: "blue", title: "사회심리학", professor: "미정" },
   {
     badge: "전공",
     badgeClass: "blue",
@@ -149,18 +140,6 @@ function renderCourses(courses) {
   });
 }
 
-// 회원가입 완료 모달
-if (params.get("signup") === "success" && modal) {
-  modal.classList.add("show");
-}
-
-if (modalCloseBtn && modal) {
-  modalCloseBtn.addEventListener("click", function () {
-    modal.classList.remove("show");
-    window.history.replaceState({}, document.title, "/main/");
-  });
-}
-
 // 처음에는 내 수강 중인 과목 보여주기
 renderCourses(myCourses);
 
@@ -186,31 +165,30 @@ searchInput.addEventListener("input", function () {
   renderCourses(filteredCourses);
 });
 
-const logoutBtn = document.getElementById("logoutBtn");
-
+// 로그아웃 버튼 클릭 이벤트 (독립적으로 분리)
 if (logoutBtn) {
   logoutBtn.addEventListener("click", function () {
     location.href = "/login/";
   });
-  document.addEventListener("DOMContentLoaded", function () {
-    const signupModal = document.getElementById("signupModal");
-    const modalCloseBtn = document.getElementById("modalCloseBtn");
-
-    const signupComplete = sessionStorage.getItem("signupComplete");
-
-    // 회원가입을 마치고 메인 페이지로 온 경우에만 모달 표시
-    if (signupComplete === "true" && signupModal) {
-      signupModal.classList.add("show");
-
-      // 새로고침할 때 다시 뜨지 않도록 삭제
-      sessionStorage.removeItem("signupComplete");
-    }
-
-    // 확인 버튼을 누르면 모달 닫기
-    if (modalCloseBtn && signupModal) {
-      modalCloseBtn.addEventListener("click", function () {
-        signupModal.classList.remove("show");
-      });
-    }
-  });
 }
+
+// 회원가입 완료 모달
+document.addEventListener("DOMContentLoaded", function () {
+  const signupModal = document.getElementById("signupModal");
+  const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const isNewSignup = urlParams.get("signup") === "1";
+
+  if (isNewSignup && signupModal) {
+    signupModal.classList.add("show");
+    // URL에서 파라미터 제거 (새로고침 시 재표시 방지)
+    history.replaceState({}, "", "/main/");
+  }
+
+  if (modalCloseBtn && signupModal) {
+    modalCloseBtn.addEventListener("click", function () {
+      signupModal.classList.remove("show");
+    });
+  }
+});

@@ -52,21 +52,13 @@ function makeStars(score) {
 
 detailStars.innerHTML = makeStars(selectedRating);
 
-function getStorageKey() {
-  return `reviews_${selectedTitle}_${selectedProfessor}`;
+function getCsrfToken() {
+  const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+  return match ? match[1] : '';
 }
 
 function getDeletedKey() {
   return `deleted_${selectedTitle}_${selectedProfessor}`;
-}
-
-function getSavedReviews() {
-  const saved = localStorage.getItem(getStorageKey());
-  return saved ? JSON.parse(saved) : [];
-}
-
-function saveReviews(reviews) {
-  localStorage.setItem(getStorageKey(), JSON.stringify(reviews));
 }
 
 function getDeletedDefaultIds() {
@@ -125,20 +117,26 @@ function openDeleteDoneModal() {
   deleteOkBtn.style.display = "block";
 }
 
-function deleteReview() {
-  if (selectedId.startsWith("my-")) {
-    const savedReviews = getSavedReviews().filter((review) => {
-      return review.id !== selectedId;
-    });
-
-    saveReviews(savedReviews);
+async function deleteReview() {
+  if (/^\d+$/.test(String(selectedId))) {
+    try {
+      await fetch("/api/reviews/delete/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: JSON.stringify({ id: Number(selectedId) }),
+      });
+    } catch (err) {
+      alert("삭제 중 오류가 발생했습니다.");
+      return;
+    }
   } else {
     const deletedIds = getDeletedDefaultIds();
-
     if (!deletedIds.includes(selectedId)) {
       deletedIds.push(selectedId);
     }
-
     saveDeletedDefaultIds(deletedIds);
   }
 
@@ -223,6 +221,21 @@ actionBar.innerHTML = `
   });
 }
 
+// 댓글 좋아요 (동적으로 추가되는 댓글 포함)
+commentList.addEventListener("click", function (event) {
+  const likeBtn = event.target.closest(".comment-like-btn");
+  if (!likeBtn) return;
+
+  const article = likeBtn.closest("article");
+  const countEl = article.querySelector(".comment-like-count");
+  if (!countEl) return;
+
+  const isLiked = likeBtn.dataset.liked === "true";
+  likeBtn.dataset.liked = isLiked ? "false" : "true";
+  countEl.textContent = Number(countEl.textContent) + (isLiked ? -1 : 1);
+  likeBtn.style.opacity = isLiked ? "1" : "0.5";
+});
+
 commentForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -261,8 +274,8 @@ cancelDeleteBtn.addEventListener("click", function () {
   deleteModal.classList.remove("show");
 });
 
-confirmDeleteBtn.addEventListener("click", function () {
-  deleteReview();
+confirmDeleteBtn.addEventListener("click", async function () {
+  await deleteReview();
 });
 
 deleteOkBtn.addEventListener("click", function () {

@@ -15,7 +15,7 @@ body {
   background-color: #f8f9fa;
   margin: 40px auto;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .main-page {
@@ -44,8 +44,9 @@ body {
 .logout-btn {
   border: none;
   background: none;
-  font-size: 11px;
-  color: #555;
+  font-size: 14px;
+  color: #222;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -87,6 +88,7 @@ body {
 
 .course-list {
   border-top: 1px solid #eee;
+  padding-bottom: 30px;
 }
 
 .course-item {
@@ -94,6 +96,7 @@ body {
   display: flex;
   align-items: center;
   border-bottom: 1px solid #eee;
+  cursor: pointer;
 }
 
 .badge {
@@ -109,21 +112,11 @@ body {
   flex-shrink: 0;
 }
 
-.blue-light {
-  background-color: #c5e8f5;
-}
-
-.blue {
-  background-color: #7db2c9;
-}
-
-.orange {
-  background-color: #f2ad70;
-}
-
-.yellow {
-  background-color: #f3cf75;
-}
+.blue-light { background-color: #c5e8f5; }
+.blue       { background-color: #7db2c9; }
+.orange     { background-color: #f2ad70; }
+.yellow     { background-color: #f3cf75; }
+.pink       { background-color: #ffa283; }
 
 .course-item strong {
   display: block;
@@ -137,8 +130,7 @@ body {
   color: #777;
 }
 
-/* 회원가입 완료 팝업 */
-
+/* 회원가입 완료 모달 */
 .modal {
   display: none;
   position: absolute;
@@ -146,92 +138,13 @@ body {
   background-color: rgba(0, 0, 0, 0.08);
   justify-content: center;
   align-items: center;
-  z-index: 20;
-}
-
-.modal.show {
-  display: flex;
-}
-
-.modal-content {
-  width: 280px;
-  height: 102px;
-  background-color: #ffffff;
-  border-radius: 2px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.modal-content p {
-  font-size: 12px;
-  font-weight: 700;
-  color: #111;
-
-  margin-bottom: 14px;
-}
-
-.modal-content button {
-  width: 82px;
-  height: 28px;
-
-  border: none;
-  border-radius: 6px;
-
-  background-color: #f2f2f2;
-
-  font-size: 10px;
-  color: #333;
-
-  cursor: pointer;
-}
-
-.badge.pink {
-  background-color: #ffa283;
-  color: #ffffff;
-}
-
-.mobile-container {
-  overflow-y: auto;
-}
-
-.course-list {
-  padding-bottom: 30px;
-}
-
-.logout-btn {
-  border: none;
-  background: none;
-  font-size: 14px;
-  color: #222;
-  text-decoration: none;
-  cursor: pointer;
-}
-/* 모달의 기준이 메인 화면이 되도록 설정 */
-.mobile-container {
-  position: relative;
-}
-
-/* 모달 전체 영역 */
-.modal {
-  display: none;
-  position: absolute;
-  inset: 0;
   z-index: 1000;
-  align-items: center;
-  justify-content: center;
 }
 
-/* 모달 표시 */
 .modal.show {
   display: flex;
 }
 
-/* 흰색 팝업창 */
 .modal-content {
   width: 286px;
   min-height: 104px;
@@ -240,10 +153,8 @@ body {
   border: 1px solid #eeeeee;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
   text-align: center;
-  transform: translateY(15px);
 }
 
-/* 완료 문구 */
 .modal-content p {
   margin: 0 0 18px;
   color: #111111;
@@ -252,7 +163,6 @@ body {
   line-height: 1.4;
 }
 
-/* 확인 버튼 */
 .modal-content button {
   width: 90px;
   height: 30px;

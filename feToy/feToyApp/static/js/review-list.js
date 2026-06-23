@@ -87,7 +87,7 @@ const defaultReviews = [
     like: 3,
     comment: 0,
     content: "설명이 이해가 잘 안됨",
-    mine: true,
+    mine: false,
   },
   {
     id: "default-6",
@@ -101,21 +101,13 @@ const defaultReviews = [
   },
 ];
 
-function getStorageKey() {
-  return `reviews_${selectedTitle}_${selectedProfessor}`;
+function getCsrfToken() {
+  const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+  return match ? match[1] : '';
 }
 
 function getDeletedKey() {
   return `deleted_${selectedTitle}_${selectedProfessor}`;
-}
-
-function getSavedReviews() {
-  const saved = localStorage.getItem(getStorageKey());
-  return saved ? JSON.parse(saved) : [];
-}
-
-function saveReviews(reviews) {
-  localStorage.setItem(getStorageKey(), JSON.stringify(reviews));
 }
 
 function getDeletedDefaultIds() {
@@ -132,12 +124,20 @@ function getDefaultReviewsForCurrentCourse() {
     const deletedIds = getDeletedDefaultIds();
     return defaultReviews.filter((review) => !deletedIds.includes(review.id));
   }
-
   return [];
 }
 
-function getAllReviews() {
-  return [...getSavedReviews(), ...getDefaultReviewsForCurrentCourse()];
+async function getAllReviews() {
+  try {
+    const response = await fetch(
+      `/api/reviews/?title=${encodeURIComponent(selectedTitle)}&professor=${encodeURIComponent(selectedProfessor)}`
+    );
+    const data = await response.json();
+    return [...(data.reviews || []), ...getDefaultReviewsForCurrentCourse()];
+  } catch (err) {
+    console.error("후기 로드 실패:", err);
+    return getDefaultReviewsForCurrentCourse();
+  }
 }
 
 function makeStars(score) {
@@ -207,10 +207,10 @@ function goToDetail(review) {
     encodeURIComponent(review.content);
 }
 
-function renderReviews() {
+async function renderReviews() {
   reviewList.innerHTML = "";
 
-  let filteredReviews = getAllReviews();
+  let filteredReviews = await getAllReviews();
 
   updateSummary(filteredReviews);
 
@@ -394,27 +394,33 @@ cancelDeleteBtn.addEventListener("click", () => {
   deleteTargetId = null;
 });
 
-confirmDeleteBtn.addEventListener("click", () => {
+confirmDeleteBtn.addEventListener("click", async () => {
   if (!deleteTargetId) return;
 
-  if (deleteTargetId.startsWith("my-")) {
-    const savedReviews = getSavedReviews().filter(
-      (review) => review.id !== deleteTargetId
-    );
-
-    saveReviews(savedReviews);
+  if (/^\d+$/.test(String(deleteTargetId))) {
+    try {
+      await fetch("/api/reviews/delete/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: JSON.stringify({ id: Number(deleteTargetId) }),
+      });
+    } catch (err) {
+      alert("삭제 중 오류가 발생했습니다.");
+      return;
+    }
   } else {
     const deletedIds = getDeletedDefaultIds();
-
     if (!deletedIds.includes(deleteTargetId)) {
       deletedIds.push(deleteTargetId);
     }
-
     saveDeletedDefaultIds(deletedIds);
   }
 
   deleteTargetId = null;
-  renderReviews();
+  await renderReviews();
   openDeleteDoneModal();
 });
 
