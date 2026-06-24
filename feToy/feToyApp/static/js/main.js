@@ -143,8 +143,13 @@ function renderCourses(courses) {
 // 처음에는 내 수강 중인 과목 보여주기
 renderCourses(myCourses);
 
-// 검색 기능
-searchInput.addEventListener("input", function () {
+// 내 수강 과목 키 세트 (allCourses 중복 제거용)
+const myCoursesSet = new Set(myCourses.map(function (c) {
+  return c.title + "||" + c.professor;
+}));
+
+// 검색 기능 (한글 IME 입력 완료 후에도 동작하도록 compositionend 병행)
+function doSearch() {
   const keyword = searchInput.value.trim().toLowerCase();
 
   if (keyword === "") {
@@ -155,15 +160,32 @@ searchInput.addEventListener("input", function () {
 
   courseTitle.style.display = "none";
 
-  const filteredCourses = allCourses.filter(function (course) {
-    return (
-      course.title.toLowerCase().includes(keyword) ||
-      course.professor.toLowerCase().includes(keyword)
-    );
+  // 내 수강 과목: 제목/교수명 어디든 keyword가 포함되면 매칭
+  const myFiltered = myCourses.filter(function (course) {
+    return course.title.toLowerCase().includes(keyword) ||
+           course.professor.toLowerCase().includes(keyword);
   });
 
-  renderCourses(filteredCourses);
-});
+  // 전체 과목: 단어(공백 기준) 시작 부분에만 매칭 — 복합어 중간 우연 매칭 방지
+  const allFiltered = allCourses.filter(function (course) {
+    if (myCoursesSet.has(course.title + "||" + course.professor)) return false;
+    const t = course.title.toLowerCase();
+    const p = course.professor.toLowerCase();
+    return t.split(/\s+/).some(function (w) { return w.startsWith(keyword); }) ||
+           p.split(/\s+/).some(function (w) { return w.startsWith(keyword); });
+  });
+
+  const filteredCourses = [...myFiltered, ...allFiltered];
+
+  if (filteredCourses.length === 0) {
+    courseList.innerHTML = '<p class="no-result">검색 결과가 없습니다.</p>';
+  } else {
+    renderCourses(filteredCourses);
+  }
+}
+
+searchInput.addEventListener("input", doSearch);
+searchInput.addEventListener("compositionend", doSearch);
 
 // 로그아웃 버튼 클릭 이벤트 (독립적으로 분리)
 if (logoutBtn) {

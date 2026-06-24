@@ -151,6 +151,26 @@ function makeStars(score) {
   return stars;
 }
 
+function updateRatingCounts(reviews) {
+  const total = reviews.length;
+  const counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+  reviews.forEach(function (r) {
+    if (r.rating in counts) counts[r.rating]++;
+  });
+
+  const ratingDropdown = document.querySelector(".rating-dropdown");
+
+  const totalLi = ratingDropdown.querySelector('[data-value="전체"]');
+  if (totalLi) totalLi.textContent = `전체(${total})`;
+
+  [5, 4, 3, 2, 1].forEach(function (n) {
+    const li = ratingDropdown.querySelector(`[data-value="${n}"]`);
+    if (!li) return;
+    const img = li.querySelector("img");
+    li.innerHTML = (img ? img.outerHTML : "") + ` ${n}(${counts[n]})`;
+  });
+}
+
 function updateSummary(reviews) {
   if (reviews.length === 0) {
     document.querySelector(".summary-left strong").textContent = "0.00";
@@ -210,9 +230,12 @@ function goToDetail(review) {
 async function renderReviews() {
   reviewList.innerHTML = "";
 
-  let filteredReviews = await getAllReviews();
+  const allReviews = await getAllReviews();
 
-  updateSummary(filteredReviews);
+  updateSummary(allReviews);
+  updateRatingCounts(allReviews);
+
+  let filteredReviews = [...allReviews];
 
   if (currentRatingFilter !== "전체") {
     filteredReviews = filteredReviews.filter((review) => {

@@ -130,6 +130,13 @@ body {
   color: #777;
 }
 
+.no-result {
+  font-size: 11px;
+  color: #999;
+  text-align: center;
+  padding: 30px 0;
+}
+
 /* 회원가입 완료 모달 */
 .modal {
   display: none;
