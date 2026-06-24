@@ -49,17 +49,9 @@ function getCurrentLecture() {
   };
 }
 
-function getStorageKey(title, professor) {
-  return `reviews_${title}_${professor}`;
-}
-
-function getSavedReviews(title, professor) {
-  const saved = localStorage.getItem(getStorageKey(title, professor));
-  return saved ? JSON.parse(saved) : [];
-}
-
-function saveReviews(title, professor, reviews) {
-  localStorage.setItem(getStorageKey(title, professor), JSON.stringify(reviews));
+function getCsrfToken() {
+  const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+  return match ? match[1] : '';
 }
 
 function setStars(score) {
@@ -142,7 +134,7 @@ function showSemesterDropdown() {
   semesterDropdown.classList.add("show");
 }
 
-function loadInitialData() {
+async function loadInitialData() {
   const matchedLecture = lectures.find((lecture) => {
     return lecture.title === selectedTitle && lecture.professor === selectedProfessor;
   });
@@ -152,17 +144,23 @@ function loadInitialData() {
     selectedColor = matchedLecture.color;
   }
 
-  if (editId) {
-    const currentLecture = getCurrentLecture();
-    const savedReviews = getSavedReviews(currentLecture.title, currentLecture.professor);
-    const targetReview = savedReviews.find((review) => review.id === editId);
+  if (editId && selectedTitle && selectedProfessor) {
+    try {
+      const response = await fetch(
+        `/api/reviews/?title=${encodeURIComponent(selectedTitle)}&professor=${encodeURIComponent(selectedProfessor)}`
+      );
+      const data = await response.json();
+      const targetReview = data.reviews.find((r) => String(r.id) === String(editId));
 
-    if (targetReview) {
-      reviewContent.value = targetReview.content;
-      contentCount.textContent = targetReview.content.length;
-      semester.value = targetReview.semester.replace(" 수강자", "");
-      setStars(targetReview.rating);
-      submitBtn.innerHTML = "✎ 후기 수정";
+      if (targetReview) {
+        reviewContent.value = targetReview.content;
+        contentCount.textContent = targetReview.content.length;
+        semester.value = targetReview.semester.replace(" 수강자", "");
+        setStars(targetReview.rating);
+        submitBtn.innerHTML = "✎ 후기 수정";
+      }
+    } catch (err) {
+      console.error("후기 로드 실패:", err);
     }
   }
 
@@ -214,43 +212,44 @@ document.addEventListener("click", (event) => {
   }
 });
 
-submitBtn.addEventListener("click", () => {
+submitBtn.addEventListener("click", async () => {
+  submitBtn.disabled = true;
+
   const currentLecture = getCurrentLecture();
 
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const hour = String(now.getHours()).padStart(2, "0");
-  const minute = String(now.getMinutes()).padStart(2, "0");
+  try {
+    const response = await fetch("/api/reviews/write/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCsrfToken(),
+      },
+      body: JSON.stringify({
+        title: currentLecture.title,
+        professor: currentLecture.professor,
+        color: currentLecture.color,
+        rating: selectedScore,
+        content: reviewContent.value.trim(),
+        semester: `${semester.value.trim()} 수강자`,
+        editId: editId || null,
+      }),
+    });
 
-  const savedReviews = getSavedReviews(currentLecture.title, currentLecture.professor);
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || "서버 오류");
+    }
 
-  const newReview = {
-    id: editId || `my-${Date.now()}`,
-    date: `${month}/${day} ${hour}:${minute}`,
-    semester: `${semester.value.trim()} 수강자`,
-    rating: selectedScore,
-    like: 0,
-    comment: 0,
-    content: reviewContent.value.trim(),
-    mine: true,
-  };
-
-  if (editId) {
-    const updatedReviews = savedReviews.map((review) =>
-      review.id === editId ? newReview : review
-    );
-
-    saveReviews(currentLecture.title, currentLecture.professor, updatedReviews);
-  } else {
-    saveReviews(currentLecture.title, currentLecture.professor, [newReview, ...savedReviews]);
+    location.href =
+      "/reviews/list/" +
+      "?title=" + encodeURIComponent(currentLecture.title) +
+      "&professor=" + encodeURIComponent(currentLecture.professor) +
+      "&color=" + encodeURIComponent(currentLecture.color);
+  } catch (err) {
+    alert("후기 저장 중 오류가 발생했습니다: " + err.message);
+    submitBtn.disabled = false;
+    checkForm();
   }
-
-  location.href =
-    "/reviews/list/" +
-    "?title=" + encodeURIComponent(currentLecture.title) +
-    "&professor=" + encodeURIComponent(currentLecture.professor) +
-    "&color=" + encodeURIComponent(currentLecture.color);
 });
 
 loadInitialData();

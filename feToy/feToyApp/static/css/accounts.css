@@ -55,6 +55,15 @@ body {
   background-color: #fff;
 }
 
+/* 브라우저 기본 비밀번호 보기 버튼 제거 */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none;
+}
+
 .input-group input::placeholder {
   color: #999;
 }
@@ -117,8 +126,16 @@ body {
   font-size: 10px;
   margin-top: 6px;
   line-height: 1.2;
+  text-align: center;
 }
 
 .error-text.show {
   display: block;
+}
+
+.server-error {
+  color: #ff5a5a;
+  font-size: 10px;
+  text-align: center;
+  margin-bottom: 6px;
 }
