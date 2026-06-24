@@ -16,6 +16,10 @@
         data-comment="{% static 'images/댓글(강의 후기 상세).svg' %}"
         data-star-active="{% static 'images/활성화 별(과목별 수강 후기-개인별점).svg' %}"
         data-star-inactive="{% static 'images/비활성화 별(과목별 수강 후기-개인 별점).svg' %}"
+        data-comment-like="{% static 'images/좋아요(댓글,대댓글).svg' %}"
+        data-reply-btn="{% static 'images/대댓글 작성 버튼.svg' %}"
+        data-reply-arrow="{% static 'images/대댓글 화살표.svg' %}"
+        data-reply-like="{% static 'images/좋아요(대댓글).svg' %}"
       ></div>
 
       <header class="detail-header">
@@ -86,14 +90,14 @@
             <strong>익명1</strong>
 
             <div class="comment-icons">
-              <button type="button" class="comment-like-btn">
+              <button type="button" class="comment-like-btn" data-liked="false">
                 <img
                   src="{% static 'images/좋아요(댓글,대댓글).svg' %}"
                   alt="좋아요"
                 />
               </button>
 
-              <button type="button">
+              <button type="button" class="comment-reply-btn">
                 <img
                   src="{% static 'images/대댓글 작성 버튼.svg' %}"
                   alt="댓글"
@@ -106,13 +110,13 @@
 
           <span>
             06.01
-            <em class="comment-like-info">
+            <span class="comment-like-info">
               <img
                 src="{% static 'images/좋아요(대댓글).svg' %}"
                 alt="좋아요"
               />
               <span class="comment-like-count">0</span>
-            </em>
+            </span>
           </span>
         </article>
 
@@ -126,14 +130,14 @@
               <strong>작성자</strong>
 
               <div class="comment-icons">
-                <button type="button" class="comment-like-btn">
+                <button type="button" class="comment-like-btn" data-liked="false">
                   <img
                     src="{% static 'images/좋아요(댓글,대댓글).svg' %}"
                     alt="좋아요"
                   />
                 </button>
 
-                <button type="button">
+                <button type="button" class="comment-reply-btn">
                   <img
                     src="{% static 'images/대댓글 작성 버튼.svg' %}"
                     alt="댓글"
@@ -146,13 +150,13 @@
 
             <span>
               06.01
-              <em class="comment-like-info">
+              <span class="comment-like-info">
                 <img
                   src="{% static 'images/좋아요(대댓글).svg' %}"
                   alt="좋아요"
                 />
                 <span class="comment-like-count">1</span>
-              </em>
+              </span>
             </span>
           </div>
         </article>

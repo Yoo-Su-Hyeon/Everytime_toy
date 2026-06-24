@@ -8,7 +8,7 @@ const selectedDate = params.get("date") || "06/10 11:50";
 const selectedSemester = params.get("semester") || "26년 1학기 수강자";
 const selectedRating = Number(params.get("rating")) || 4;
 const selectedLike = Number(params.get("like")) || 1;
-const selectedMine = params.get("mine") === "true" || selectedId.startsWith("my-");
+const selectedMine = params.get("mine") === "true";
 const selectedContent = params.get("content") || "";
 
 const iconPaths = document.getElementById("iconPaths");
@@ -18,6 +18,10 @@ const likeActiveIconPath = iconPaths.dataset.likeActive;
 const commentIconPath = iconPaths.dataset.comment;
 const starActiveIcon = iconPaths.dataset.starActive;
 const starInactiveIcon = iconPaths.dataset.starInactive;
+const commentLikeIcon = iconPaths.dataset.commentLike;
+const replyBtnIcon = iconPaths.dataset.replyBtn;
+const replyArrowIcon = iconPaths.dataset.replyArrow;
+const replyLikeIcon = iconPaths.dataset.replyLike;
 
 const detailTitle = document.getElementById("detailTitle");
 const detailProfessor = document.getElementById("detailProfessor");
@@ -190,7 +194,7 @@ actionBar.innerHTML = `
       <span id="likeCount">추천 ${reviewLikeCount}</span>
     </button>
 
-    <button type="button">
+    <button type="button" id="commentMoveBtn">
       <img id="commentIcon" src="${commentIconPath}" alt="댓글">
       <span id="commentCount">댓글 2</span>
     </button>
@@ -203,6 +207,10 @@ actionBar.innerHTML = `
   const reviewLikeBtn = document.getElementById("reviewLikeBtn");
   const likeIcon = document.getElementById("likeIcon");
   const likeCount = document.getElementById("likeCount");
+
+  document.getElementById("commentMoveBtn").addEventListener("click", function () {
+    commentInput.focus();
+  });
 
   reviewLikeBtn.addEventListener("click", function () {
     isReviewLiked = !isReviewLiked;
@@ -221,8 +229,37 @@ actionBar.innerHTML = `
   });
 }
 
-// 댓글 좋아요 (동적으로 추가되는 댓글 포함)
+// 대댓글 대상 추적
+let replyTarget = null;
+let focusingForReply = false;
+let myAnonNum = null; // 이 세션에서 내가 쓸 익명 번호
+
+// 댓글 좋아요 / 대댓글 버튼 (동적으로 추가되는 댓글 포함)
 commentList.addEventListener("click", function (event) {
+  // 대댓글 버튼 → 대상 기억 후 하단 입력창 포커스
+  const replyBtn = event.target.closest(".comment-reply-btn");
+  if (replyBtn) {
+    const article = replyBtn.closest("article");
+
+    // 대댓글의 경우 부모 댓글을 찾음
+    if (article.classList.contains("reply")) {
+      let prev = article.previousElementSibling;
+      while (prev && prev.classList.contains("reply")) {
+        prev = prev.previousElementSibling;
+      }
+      replyTarget = prev || article;
+    } else {
+      replyTarget = article;
+    }
+
+    focusingForReply = true;
+    commentInput.placeholder = "대댓글을 입력하세요.";
+    commentInput.focus();
+    setTimeout(function () { focusingForReply = false; }, 0);
+    return;
+  }
+
+  // 댓글 좋아요
   const likeBtn = event.target.closest(".comment-like-btn");
   if (!likeBtn) return;
 
@@ -236,6 +273,23 @@ commentList.addEventListener("click", function (event) {
   likeBtn.style.opacity = isLiked ? "1" : "0.5";
 });
 
+function getNextAnonNumber() {
+  let max = 0;
+  commentList.querySelectorAll("strong").forEach(function (el) {
+    const match = el.textContent.match(/^익명(\d+)$/);
+    if (match) max = Math.max(max, Number(match[1]));
+  });
+  return max + 1;
+}
+
+// 입력창 직접 클릭 시 대댓글 모드 해제
+commentInput.addEventListener("focus", function () {
+  if (!focusingForReply) {
+    replyTarget = null;
+    commentInput.placeholder = "댓글을 입력하세요.";
+  }
+});
+
 commentForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -246,27 +300,75 @@ commentForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const newComment = document.createElement("article");
-  newComment.className = "comment-item";
-
-  newComment.innerHTML = `
-    <div class="comment-top">
-      <strong>익명</strong>
-      <div class="comment-icons">
-        <button type="button">
-          <img src="${likeIconPath}" alt="좋아요">
-        </button>
-        <button type="button">
-          <img src="${commentIconPath}" alt="댓글">
-        </button>
+  if (replyTarget) {
+    // 대댓글 생성
+    const reply = document.createElement("article");
+    reply.className = "comment-item reply";
+    if (myAnonNum === null) myAnonNum = getNextAnonNumber();
+    const replyAnonNum = myAnonNum;
+    reply.innerHTML = `
+      <span class="reply-mark">
+        <img src="${replyArrowIcon}" alt="댓글" />
+      </span>
+      <div class="reply-body">
+        <div class="comment-top">
+          <strong>익명${replyAnonNum}</strong>
+          <div class="comment-icons">
+            <button type="button" class="comment-like-btn" data-liked="false">
+              <img src="${commentLikeIcon}" alt="좋아요" />
+            </button>
+            <button type="button" class="comment-reply-btn">
+              <img src="${replyBtnIcon}" alt="댓글" />
+            </button>
+          </div>
+        </div>
+        <p>${text}</p>
+        <span>방금 전
+          <span class="comment-like-info">
+            <img src="${replyLikeIcon}" alt="좋아요" />
+            <span class="comment-like-count">0</span>
+          </span>
+        </span>
       </div>
-    </div>
+    `;
 
-    <p>${text}</p>
-    <span class="comment-date">방금 전</span>
-  `;
+    // 부모 댓글 이후 마지막 대댓글 다음에 삽입
+    let insertAfter = replyTarget;
+    while (
+      insertAfter.nextElementSibling &&
+      insertAfter.nextElementSibling.classList.contains("comment-item") &&
+      insertAfter.nextElementSibling.classList.contains("reply")
+    ) {
+      insertAfter = insertAfter.nextElementSibling;
+    }
+    insertAfter.after(reply);
 
-  commentList.appendChild(newComment);
+    replyTarget = null;
+    commentInput.placeholder = "댓글을 입력하세요.";
+  } else {
+    // 일반 댓글 생성 (익명 번호 자동 부여)
+    if (myAnonNum === null) myAnonNum = getNextAnonNumber();
+    const anonNum = myAnonNum;
+    const newComment = document.createElement("article");
+    newComment.className = "comment-item";
+    newComment.innerHTML = `
+      <div class="comment-top">
+        <strong>익명${anonNum}</strong>
+        <div class="comment-icons">
+          <button type="button" class="comment-like-btn" data-liked="false">
+            <img src="${commentLikeIcon}" alt="좋아요">
+          </button>
+          <button type="button" class="comment-reply-btn">
+            <img src="${replyBtnIcon}" alt="댓글">
+          </button>
+        </div>
+      </div>
+      <p>${text}</p>
+      <span class="comment-date">방금 전</span>
+    `;
+    commentList.appendChild(newComment);
+  }
+
   commentInput.value = "";
 });
 

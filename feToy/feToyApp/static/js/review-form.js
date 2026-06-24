@@ -150,7 +150,7 @@ async function loadInitialData() {
         `/api/reviews/?title=${encodeURIComponent(selectedTitle)}&professor=${encodeURIComponent(selectedProfessor)}`
       );
       const data = await response.json();
-      const targetReview = data.reviews.find((r) => String(r.id) === String(editId));
+      const targetReview = data.reviews.find((r) => String(r.id) === String(editId) && r.mine);
 
       if (targetReview) {
         reviewContent.value = targetReview.content;
