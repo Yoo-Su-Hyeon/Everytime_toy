@@ -309,7 +309,7 @@ async function renderReviews() {
 
       const id = btn.dataset.id;
 
-      location.href =
+      location.replace(
         "/reviews/write/" +
         "?title=" +
         encodeURIComponent(selectedTitle) +
@@ -318,7 +318,8 @@ async function renderReviews() {
         "&color=" +
         encodeURIComponent(selectedColor) +
         "&editId=" +
-        encodeURIComponent(id);
+        encodeURIComponent(id)
+      );
     });
   });
 
@@ -389,14 +390,15 @@ document.addEventListener("click", closeAllDropdowns);
 writeBtn.classList.add(selectedColor);
 
 writeBtn.addEventListener("click", function () {
-  location.href =
+  location.replace(
     "/reviews/write/" +
     "?title=" +
     encodeURIComponent(selectedTitle) +
     "&professor=" +
     encodeURIComponent(selectedProfessor) +
     "&color=" +
-    encodeURIComponent(selectedColor);
+    encodeURIComponent(selectedColor)
+  );
 });
 
 function openDeleteConfirmModal() {
