@@ -1,9 +1,15 @@
+// =============================================
+// main.js — 메인 화면 (과목 목록 / 검색 / 모달)
+// =============================================
+
+// DOM 요소 참조
 const searchInput = document.getElementById("searchInput");
 const courseList = document.getElementById("courseList");
 const courseTitle = document.getElementById("courseTitle");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// 메인화면에 처음 보일 내 수강 중인 과목
+// 현재 사용자가 수강 중인 과목 목록
+// badge: 이수구분 라벨, badgeClass: 배지 색상 클래스
 const myCourses = [
   {
     badge: "전필",
@@ -49,7 +55,7 @@ const myCourses = [
   },
 ];
 
-// 검색할 때 나올 전체 과목
+// 검색 시 myCourses 외에 추가로 탐색할 전체 과목 목록
 const allCourses = [
   {
     badge: "전탐",
@@ -108,7 +114,8 @@ const allCourses = [
   },
 ];
 
-// 과목 목록 그리기
+// 과목 목록을 courseList 영역에 렌더링
+// 각 항목 클릭 시 해당 과목의 수강 후기 목록 페이지로 이동
 function renderCourses(courses) {
   courseList.innerHTML = "";
 
@@ -124,7 +131,6 @@ function renderCourses(courses) {
       </div>
     `;
 
-    // 과목 클릭 시 과목별 수강 후기 페이지로 이동
     item.addEventListener("click", function () {
       location.href =
         "/reviews/list/" +
@@ -140,18 +146,22 @@ function renderCourses(courses) {
   });
 }
 
-// 처음에는 내 수강 중인 과목 보여주기
+// 페이지 첫 진입 시 내 수강 과목을 기본으로 표시
 renderCourses(myCourses);
 
-// 내 수강 과목 키 세트 (allCourses 중복 제거용)
+// allCourses 중복 제거 판별용 키 세트 (myCourses와 동일한 과목 제외)
 const myCoursesSet = new Set(myCourses.map(function (c) {
   return c.title + "||" + c.professor;
 }));
 
-// 검색 기능 (한글 IME 입력 완료 후에도 동작하도록 compositionend 병행)
+// 검색 실행 함수
+// - 한글 IME 중간 입력(compositionend)에도 정상 동작하도록 두 이벤트 모두 연결
+// - myCourses: 제목·교수명 어디든 keyword가 포함되면 매칭 (넓은 매칭)
+// - allCourses: 단어(공백 기준) 시작 부분에만 매칭 → 복합어 중간 우연 매칭 방지
 function doSearch() {
   const keyword = searchInput.value.trim().toLowerCase();
 
+  // 검색어가 비어있으면 내 수강 과목으로 초기화
   if (keyword === "") {
     courseTitle.style.display = "block";
     renderCourses(myCourses);
@@ -160,14 +170,13 @@ function doSearch() {
 
   courseTitle.style.display = "none";
 
-  // 내 수강 과목: 제목/교수명 어디든 keyword가 포함되면 매칭
   const myFiltered = myCourses.filter(function (course) {
     return course.title.toLowerCase().includes(keyword) ||
            course.professor.toLowerCase().includes(keyword);
   });
 
-  // 전체 과목: 단어(공백 기준) 시작 부분에만 매칭 — 복합어 중간 우연 매칭 방지
   const allFiltered = allCourses.filter(function (course) {
+    // myCourses에 이미 있는 과목은 중복 제외
     if (myCoursesSet.has(course.title + "||" + course.professor)) return false;
     const t = course.title.toLowerCase();
     const p = course.professor.toLowerCase();
@@ -187,14 +196,15 @@ function doSearch() {
 searchInput.addEventListener("input", doSearch);
 searchInput.addEventListener("compositionend", doSearch);
 
-// 로그아웃 버튼 클릭 이벤트 (독립적으로 분리)
+// 로그아웃 버튼: 로그인 페이지로 이동
 if (logoutBtn) {
   logoutBtn.addEventListener("click", function () {
     location.href = "/login/";
   });
 }
 
-// 회원가입 완료 모달
+// 회원가입 완료 모달 처리
+// 회원가입 성공 후 백엔드가 /main/?signup=1 로 리다이렉트 → URL 파라미터로 감지해 모달 표시
 document.addEventListener("DOMContentLoaded", function () {
   const signupModal = document.getElementById("signupModal");
   const modalCloseBtn = document.getElementById("modalCloseBtn");
@@ -204,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (isNewSignup && signupModal) {
     signupModal.classList.add("show");
-    // URL에서 파라미터 제거 (새로고침 시 재표시 방지)
+    // URL 파라미터 제거 (새로고침 시 모달이 다시 뜨는 것 방지)
     history.replaceState({}, "", "/main/");
   }
 

@@ -1,9 +1,15 @@
+// =============================================
+// review-list.js — 과목별 수강 후기 목록 페이지
+// =============================================
+
+// URL 파라미터에서 과목명·교수명·배지 색상 읽기
 const params = new URLSearchParams(window.location.search);
 
 const selectedTitle = params.get("title") || "생명과학의기초";
 const selectedProfessor = params.get("professor") || "김태훈";
 const selectedColor = params.get("color") || "blue-light";
 
+// DOM 요소 참조
 const pageTitle = document.getElementById("pageTitle");
 const professorName = document.getElementById("professorName");
 const reviewList = document.getElementById("reviewList");
@@ -23,19 +29,24 @@ const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const deleteOkBtn = document.getElementById("deleteOkBtn");
 
+// HTML data 속성에서 아이콘 경로 읽기
 const likeIcon = iconPaths.dataset.like;
 const commentIcon = iconPaths.dataset.comment;
 const starActiveIcon = iconPaths.dataset.starActive;
 const starInactiveIcon = iconPaths.dataset.starInactive;
 const emptyIcon = iconPaths.dataset.empty;
 
+// 헤더 과목명·교수명 표시
 pageTitle.textContent = `${selectedTitle} 수강 후기`;
 professorName.textContent = `교수명: ${selectedProfessor}`;
 
+// 현재 선택된 필터 상태
 let currentRatingFilter = "전체";
 let currentSortFilter = "최신순";
 let deleteTargetId = null;
 
+// 생명과학의기초 / 김태훈 과목에만 표시되는 샘플 후기 데이터
+// mine: false → 수정·삭제 버튼 표시 안 함
 const defaultReviews = [
   {
     id: "default-1",
@@ -101,11 +112,13 @@ const defaultReviews = [
   },
 ];
 
+// 쿠키에서 Django CSRF 토큰 읽기 (API POST 요청 시 필요)
 function getCsrfToken() {
   const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
   return match ? match[1] : '';
 }
 
+// 삭제된 기본 샘플 후기 ID를 localStorage에서 관리하는 유틸 함수
 function getDeletedKey() {
   return `deleted_${selectedTitle}_${selectedProfessor}`;
 }
@@ -119,6 +132,8 @@ function saveDeletedDefaultIds(ids) {
   localStorage.setItem(getDeletedKey(), JSON.stringify(ids));
 }
 
+// 현재 과목이 생명과학의기초 / 김태훈인 경우에만 샘플 후기 반환
+// (삭제된 항목은 localStorage 기록을 통해 제외)
 function getDefaultReviewsForCurrentCourse() {
   if (selectedTitle === "생명과학의기초" && selectedProfessor === "김태훈") {
     const deletedIds = getDeletedDefaultIds();
@@ -127,6 +142,8 @@ function getDefaultReviewsForCurrentCourse() {
   return [];
 }
 
+// API에서 DB에 저장된 후기를 가져오고, 샘플 후기와 합쳐서 반환
+// mine 필드는 서버에서 현재 로그인 사용자 기준으로 설정됨
 async function getAllReviews() {
   try {
     const response = await fetch(
@@ -140,6 +157,7 @@ async function getAllReviews() {
   }
 }
 
+// 별점 이미지 HTML 생성 (score 이하는 활성화 별, 초과는 비활성화 별)
 function makeStars(score) {
   let stars = "";
 
@@ -151,6 +169,7 @@ function makeStars(score) {
   return stars;
 }
 
+// 별점 필터 드롭다운의 각 항목에 실제 후기 개수를 업데이트
 function updateRatingCounts(reviews) {
   const total = reviews.length;
   const counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
@@ -171,6 +190,7 @@ function updateRatingCounts(reviews) {
   });
 }
 
+// 상단 평균 별점 및 점수 표시 업데이트
 function updateSummary(reviews) {
   if (reviews.length === 0) {
     document.querySelector(".summary-left strong").textContent = "0.00";
@@ -187,6 +207,7 @@ function updateSummary(reviews) {
   summaryStars.innerHTML = makeStars(Math.round(average));
 }
 
+// 후기가 없을 때 빈 상태 화면 표시
 function renderEmptyState() {
   reviewList.innerHTML = `
     <div class="empty-state">
@@ -200,49 +221,45 @@ function renderEmptyState() {
   `;
 }
 
+// 후기 상세 페이지로 이동 (URL 파라미터로 후기 데이터 전달)
 function goToDetail(review) {
   location.href =
     "/reviews/detail/" +
-    "?title=" +
-    encodeURIComponent(selectedTitle) +
-    "&professor=" +
-    encodeURIComponent(selectedProfessor) +
-    "&color=" +
-    encodeURIComponent(selectedColor) +
-    "&id=" +
-    encodeURIComponent(review.id) +
-    "&date=" +
-    encodeURIComponent(review.date) +
-    "&semester=" +
-    encodeURIComponent(review.semester) +
-    "&rating=" +
-    encodeURIComponent(review.rating) +
-    "&like=" +
-    encodeURIComponent(review.like) +
-    "&comment=" +
-    encodeURIComponent(review.comment) +
-    "&mine=" +
-    encodeURIComponent(review.mine) +
-    "&content=" +
-    encodeURIComponent(review.content);
+    "?title=" + encodeURIComponent(selectedTitle) +
+    "&professor=" + encodeURIComponent(selectedProfessor) +
+    "&color=" + encodeURIComponent(selectedColor) +
+    "&id=" + encodeURIComponent(review.id) +
+    "&date=" + encodeURIComponent(review.date) +
+    "&semester=" + encodeURIComponent(review.semester) +
+    "&rating=" + encodeURIComponent(review.rating) +
+    "&like=" + encodeURIComponent(review.like) +
+    "&comment=" + encodeURIComponent(review.comment) +
+    "&mine=" + encodeURIComponent(review.mine) +
+    "&content=" + encodeURIComponent(review.content);
 }
 
+// 후기 목록 렌더링
+// - API + 샘플 후기 병합 후 현재 필터·정렬 조건 적용
+// - mine: true인 후기에만 수정·삭제 버튼 표시 (본인 작성 후기 구분)
 async function renderReviews() {
   reviewList.innerHTML = "";
 
   const allReviews = await getAllReviews();
 
+  // 전체 목록 기준으로 요약 정보 및 별점별 개수 업데이트
   updateSummary(allReviews);
   updateRatingCounts(allReviews);
 
   let filteredReviews = [...allReviews];
 
+  // 별점 필터 적용
   if (currentRatingFilter !== "전체") {
     filteredReviews = filteredReviews.filter((review) => {
       return review.rating === Number(currentRatingFilter);
     });
   }
 
+  // 정렬 적용
   if (currentSortFilter === "추천순") {
     filteredReviews.sort((a, b) => b.like - a.like);
   }
@@ -296,6 +313,7 @@ async function renderReviews() {
       <p class="review-content">${review.content}</p>
     `;
 
+    // 후기 항목 클릭 시 상세 페이지로 이동
     item.addEventListener("click", () => {
       goToDetail(review);
     });
@@ -303,6 +321,7 @@ async function renderReviews() {
     reviewList.appendChild(item);
   });
 
+  // 수정 버튼: 후기 작성 폼으로 이동 (editId 전달)
   document.querySelectorAll(".edit-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -311,17 +330,14 @@ async function renderReviews() {
 
       location.href =
         "/reviews/write/" +
-        "?title=" +
-        encodeURIComponent(selectedTitle) +
-        "&professor=" +
-        encodeURIComponent(selectedProfessor) +
-        "&color=" +
-        encodeURIComponent(selectedColor) +
-        "&editId=" +
-        encodeURIComponent(id);
+        "?title=" + encodeURIComponent(selectedTitle) +
+        "&professor=" + encodeURIComponent(selectedProfessor) +
+        "&color=" + encodeURIComponent(selectedColor) +
+        "&editId=" + encodeURIComponent(id);
     });
   });
 
+  // 삭제 버튼: 삭제 확인 모달 표시
   document.querySelectorAll(".delete-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -332,11 +348,13 @@ async function renderReviews() {
   });
 }
 
+// 필터 드롭다운 모두 닫기
 function closeAllDropdowns() {
   ratingFilter.classList.remove("open");
   sortFilter.classList.remove("open");
 }
 
+// 별점 필터 드롭다운 열기/닫기 토글
 ratingFilter.querySelector(".select-btn").addEventListener("click", function (event) {
   event.stopPropagation();
 
@@ -348,6 +366,7 @@ ratingFilter.querySelector(".select-btn").addEventListener("click", function (ev
   }
 });
 
+// 정렬 필터 드롭다운 열기/닫기 토글
 sortFilter.querySelector(".select-btn").addEventListener("click", function (event) {
   event.stopPropagation();
 
@@ -359,6 +378,7 @@ sortFilter.querySelector(".select-btn").addEventListener("click", function (even
   }
 });
 
+// 별점 필터 선택 시 목록 재렌더링
 ratingFilter.querySelectorAll(".select-dropdown li").forEach(function (item) {
   item.addEventListener("click", function (event) {
     event.stopPropagation();
@@ -372,6 +392,7 @@ ratingFilter.querySelectorAll(".select-dropdown li").forEach(function (item) {
   });
 });
 
+// 정렬 방식 선택 시 목록 재렌더링
 sortFilter.querySelectorAll(".select-dropdown li").forEach(function (item) {
   item.addEventListener("click", function (event) {
     event.stopPropagation();
@@ -384,21 +405,21 @@ sortFilter.querySelectorAll(".select-dropdown li").forEach(function (item) {
   });
 });
 
+// 드롭다운 외부 클릭 시 닫기
 document.addEventListener("click", closeAllDropdowns);
 
+// 후기 작성 버튼: 과목 색상 적용 후 작성 폼으로 이동
 writeBtn.classList.add(selectedColor);
 
 writeBtn.addEventListener("click", function () {
   location.href =
     "/reviews/write/" +
-    "?title=" +
-    encodeURIComponent(selectedTitle) +
-    "&professor=" +
-    encodeURIComponent(selectedProfessor) +
-    "&color=" +
-    encodeURIComponent(selectedColor);
+    "?title=" + encodeURIComponent(selectedTitle) +
+    "&professor=" + encodeURIComponent(selectedProfessor) +
+    "&color=" + encodeURIComponent(selectedColor);
 });
 
+// 삭제 확인 모달 표시
 function openDeleteConfirmModal() {
   deleteModal.classList.add("show");
   deleteModalText.textContent = "수강 후기를 정말 삭제하시겠습니까?";
@@ -406,17 +427,22 @@ function openDeleteConfirmModal() {
   deleteOkBtn.style.display = "none";
 }
 
+// 삭제 완료 모달로 전환
 function openDeleteDoneModal() {
   deleteModalText.textContent = "수강 후기가 삭제되었습니다.";
   deleteBtnRow.style.display = "none";
   deleteOkBtn.style.display = "block";
 }
 
+// 삭제 취소 버튼
 cancelDeleteBtn.addEventListener("click", () => {
   deleteModal.classList.remove("show");
   deleteTargetId = null;
 });
 
+// 삭제 확인 버튼
+// - 숫자 ID: DB 후기 → API(/api/reviews/delete/)로 삭제 요청
+// - 문자열 ID (default-X): 샘플 후기 → localStorage에 삭제 기록 저장
 confirmDeleteBtn.addEventListener("click", async () => {
   if (!deleteTargetId) return;
 
@@ -447,8 +473,10 @@ confirmDeleteBtn.addEventListener("click", async () => {
   openDeleteDoneModal();
 });
 
+// 삭제 완료 확인 버튼: 모달 닫기
 deleteOkBtn.addEventListener("click", () => {
   deleteModal.classList.remove("show");
 });
 
+// 페이지 로드 시 후기 목록 초기 렌더링
 renderReviews();
