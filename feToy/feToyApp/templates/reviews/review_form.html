@@ -11,7 +11,10 @@
     <div class="mobile-container review-form-page">
       <header class="review-form-header">
         <button type="button" class="back-btn" onclick="history.back()">
-          ‹
+          <img
+                  src="{% static 'images/뒤로가기.svg' %}"
+                  alt="뒤로가기"
+                /> 
         </button>
         <h1>강의 후기 등록</h1>
       </header>
@@ -73,7 +76,10 @@
         </section>
 
         <button type="button" class="submit-btn" id="submitBtn" disabled>
-          ✎ 후기 작성
+          <img
+                  src="{% static 'images/글쓰기 버튼.svg' %}"
+                  alt="후기 작성"
+                /> 후기 작성
         </button>
       </form>
     </div>
