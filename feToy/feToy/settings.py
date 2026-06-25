@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-wp&=03gcfshttkrmim6!5v%bsrluk6%e&!m6b=2djmo9vjun&-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["52.78.154.34",]
+ALLOWED_HOSTS = [
+    "52.78.154.34",
+    "everytime.cloud",
+    "www.everytime.cloud",
+]
 
 
 # Application definition
