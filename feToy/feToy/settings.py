@@ -31,7 +31,6 @@ ALLOWED_HOSTS = [
     "www.everytime.cloud",
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
