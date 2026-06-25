@@ -149,7 +149,8 @@ body {
   color: #777;
   font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
+  cursor: not-allowed;
+  opacity: 1;
 
   display: flex;
   align-items: center;
@@ -164,9 +165,8 @@ body {
   flex-shrink: 0;
 }
 
-.submit-btn.active {
-  background-color: #d9d9d9;
-  color: #777;
+.submit-btn:not(:disabled) {
+  cursor: pointer;
 }
 
 .dropdown-section {
@@ -205,27 +205,27 @@ body {
   background-color: #f4f4f4;
 }
 
-.submit-btn.active.blue-light {
+.submit-btn:not(:disabled).blue-light {
   background-color: #c7e4f2;
   color: #4b8aa5;
 }
 
-.submit-btn.active.blue {
+.submit-btn:not(:disabled).blue {
   background-color: #85b8cf;
   color: #ffffff;
 }
 
-.submit-btn.active.orange {
+.submit-btn:not(:disabled).orange {
   background-color: #f4ad73;
   color: #ffffff;
 }
 
-.submit-btn.active.yellow {
+.submit-btn:not(:disabled).yellow {
   background-color: #f6cf70;
   color: #ffffff;
 }
 
-.submit-btn.active.pink {
+.submit-btn:not(:disabled).pink {
   background-color: #ffa283;
   color: #ffffff;
 }

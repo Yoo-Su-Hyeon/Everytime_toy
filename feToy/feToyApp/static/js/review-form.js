@@ -98,11 +98,10 @@ function checkForm() {
 
   if (hasScore && hasContent && hasLecture && hasSemester) {
     submitBtn.disabled = false;
-    submitBtn.classList.add("active");
     applyButtonColor();
   } else {
     submitBtn.disabled = true;
-    submitBtn.classList.remove("active", "blue-light", "blue", "orange", "yellow", "pink");
+    submitBtn.classList.remove("blue-light", "blue", "orange", "yellow", "pink");
   }
 }
 
@@ -268,11 +267,12 @@ submitBtn.addEventListener("click", async () => {
       throw new Error(err.error || "서버 오류");
     }
 
-    location.href =
+    location.replace(
       "/reviews/list/" +
       "?title=" + encodeURIComponent(currentLecture.title) +
       "&professor=" + encodeURIComponent(currentLecture.professor) +
-      "&color=" + encodeURIComponent(currentLecture.color);
+      "&color=" + encodeURIComponent(currentLecture.color)
+    );
   } catch (err) {
     alert("후기 저장 중 오류가 발생했습니다: " + err.message);
     submitBtn.disabled = false;
@@ -280,5 +280,13 @@ submitBtn.addEventListener("click", async () => {
   }
 });
 
-// 페이지 로드 시 초기 데이터 설정
+document.getElementById("backBtn").addEventListener("click", function () {
+  location.replace(
+    "/reviews/list/" +
+    "?title=" + encodeURIComponent(selectedTitle || "생명과학의기초") +
+    "&professor=" + encodeURIComponent(selectedProfessor || "김태훈") +
+    "&color=" + encodeURIComponent(selectedColor || "blue-light")
+  );
+});
+
 loadInitialData();
