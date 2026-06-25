@@ -98,10 +98,11 @@ function checkForm() {
 
   if (hasScore && hasContent && hasLecture && hasSemester) {
     submitBtn.disabled = false;
+    submitBtn.classList.add("active");
     applyButtonColor();
   } else {
     submitBtn.disabled = true;
-    submitBtn.classList.remove("blue-light", "blue", "orange", "yellow", "pink");
+    submitBtn.classList.remove("active", "blue-light", "blue", "orange", "yellow", "pink");
   }
 }
 
